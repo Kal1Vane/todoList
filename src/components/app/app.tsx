@@ -1,41 +1,25 @@
-import { Button, Grid, IconButton, List, ListItemAvatar, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField/TextField';
 import { useState } from 'react';
-import { Delete,Folder } from '@mui/icons-material';
-import ListItem from '@mui/material/ListItem';
-import Avatar from '@mui/material/Avatar';
-import ListItemText from '@mui/material/ListItemText';
-import { TodoItem, TodoItemIcon } from '../../types';
-import { nanoid } from 'nanoid';
+import ListTodo from '../list-todo/list-todo';
+import { useDispatch } from 'react-redux';
+import { addTodo } from '../../store/data-store/data-store';
 
 
 function App(): JSX.Element {
-  const [todoList,setTodoList] = useState<TodoItem[]>([]);
   const [isDisabledBtn,setDisabledBtn] = useState<boolean>(true);
   const [valueInput,setValueInput] = useState<string>('');
 
-  function addTodoList(){
-    const copy = Object.assign([], todoList);
+  const dispatch = useDispatch();
 
-    if (valueInput !== null){
-      copy.push({
-        title : valueInput,
-        id : nanoid(),
-        description: 'test',
-        icon : TodoItemIcon.DEFAULT,
-      });
-    }
-    setTodoList(copy);
+
+  function addTodoList(){
+    dispatch(addTodo(valueInput));
     setDisabledBtn(true);
     setValueInput('');
   }
 
-  function removeTodoItem(id : string){
-    const copy = Object.assign([], todoList);
-    const indexItem = copy.findIndex((todo: TodoItem) => todo.id === id);
-    copy.splice(indexItem,1);
-    setTodoList(copy);
-  }
+
   return (
     <>
       <Grid
@@ -83,32 +67,7 @@ function App(): JSX.Element {
         </Grid>
       </Grid>
 
-
-      <List>
-        { todoList ?  todoList.map((item) => (
-          <ListItem
-            key={item.id}
-            secondaryAction={
-              <IconButton onClick={() => {
-                removeTodoItem(item.id);
-              }} edge="end" aria-label="delete"
-              >
-                <Delete />
-              </IconButton>
-            }
-          >
-            <ListItemAvatar>
-              <Avatar>
-                <Folder />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={item.title}
-              secondary={item.description ? item.description : ''}
-            />
-          </ListItem>)) :
-          'Todo List is empty'}
-      </List>
+      <ListTodo />
     </>
   );
 }
