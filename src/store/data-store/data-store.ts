@@ -2,16 +2,18 @@ import { createSlice } from '@reduxjs/toolkit';
 import { NameProcess } from '../../const';
 import { TodoItem } from '../../types';
 import { getTodoItem } from '../../utils';
+import { fetchTodoList } from '../api-creators';
 
 export type DataProcess = {
   isLoaded : boolean,
   todoArray: TodoItem[],
+  isError : boolean,
 }
 
 const initialState : DataProcess = {
   isLoaded: false,
   todoArray: [],
-
+  isError : false,
 };
 
 export const dataProcess = createSlice({
@@ -26,7 +28,21 @@ export const dataProcess = createSlice({
       state.todoArray.push(getTodoItem(action.payload));
     },
     removeTodo : (state,action) => {
-      state.todoArray.filter((todo) => todo.id !== action.payload);
+      state.todoArray = state.todoArray.filter((todo) => todo.id !== action.payload);
+    },
+  },
+  extraReducers: {
+    [fetchTodoList.fulfilled.type] : (state,action) => {
+      state.todoArray = action.payload;
+      state.isLoaded = true;
+    },
+    [fetchTodoList.pending.type] : (state,action) => {
+      state.todoArray = action.payload;
+      state.isLoaded = false;
+    },
+    [fetchTodoList.rejected.type] : (state,action) => {
+      state.isLoaded = false;
+      state.isError = true;
     },
   },
 });

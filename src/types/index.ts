@@ -11,3 +11,10 @@ export enum TodoItemIcon {
   JOB = 'Job',
   HOME = 'Home',
 }
+
+export type TodoListRequest = {
+  'userId': number,
+  'id': number,
+  'title': string,
+  'completed': boolean,
+}
