@@ -5,7 +5,12 @@ import { TodoListRequest } from '../../types';
 export const fetchTodoList = createAsyncThunk(
   'data/fetchTodo',
   async (_, thunkApi) => {
-    const {data} = await axios.get<TodoListRequest[]>('https://jsonplaceholder.typicode.com/users/1/todos');
-    return data;
+    try {
+      const {data} = await axios.get<TodoListRequest[]>('http://localhost:3001/todos');
+      return data;
+    } catch (e) {
+      return thunkApi.rejectWithValue('Server error, data not loaded. Please reloaded app');
+    }
+
   },
 );

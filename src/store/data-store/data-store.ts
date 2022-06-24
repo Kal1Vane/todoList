@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+
 import { NameProcess } from '../../const';
 import { TodoItem } from '../../types';
 import { getTodoItem } from '../../utils';
@@ -25,10 +27,10 @@ export const dataProcess = createSlice({
       state.isLoaded = true;
     },
     addTodo : (state,action) => {
-      state.todoArray.push(getTodoItem(action.payload));
+      state.todoArray.unshift(getTodoItem(action.payload));
     },
     removeTodo : (state,action) => {
-      state.todoArray = state.todoArray.filter((todo) => todo.id !== action.payload);
+      state.todoArray = state.todoArray.filter((todo) => String(todo.id) !== action.payload);
     },
   },
   extraReducers: {
@@ -37,12 +39,12 @@ export const dataProcess = createSlice({
       state.isLoaded = true;
     },
     [fetchTodoList.pending.type] : (state,action) => {
-      state.todoArray = action.payload;
       state.isLoaded = false;
     },
     [fetchTodoList.rejected.type] : (state,action) => {
-      state.isLoaded = false;
+      state.isLoaded = true;
       state.isError = true;
+      toast.error(action.payload);
     },
   },
 });
